@@ -11,8 +11,9 @@ class CoinRepository extends GetxController {
     try {
       final response = await _networkController.get(COINS);
       if (response.statusCode == 200) {
-        final List<dynamic> data = response.data;
-        final coins = data.map((e) => Coin.fromJson(e)).toList();
+        final List<Coin> data = response.data;
+        final coins =
+            data.map((e) => Coin.fromJson(e as Map<String, dynamic>)).toList();
         return coins;
       } else {
         throw 'Error';

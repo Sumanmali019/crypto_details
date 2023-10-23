@@ -28,7 +28,7 @@ class CoinDetail {
   String? firstDataAt;
   String? lastDataAt;
 
-  CoinDetail(
+  CoinDetail( 
       {this.id,
       this.name,
       this.symbol,

@@ -5,8 +5,8 @@ class NetworkService {
 
   Future<Response> get(String url) async {
     try {
-      return await _dio.get(url);
-      // ignore: nullable_type_in_catch_clause
+      final response = await _dio.get(url);
+      return response;
     } on DioError catch (e) {
       throw e.message;
     }
@@ -14,7 +14,8 @@ class NetworkService {
 
   Future<Response> getCoinById(String url) async {
     try {
-      return await _dio.get(url);
+      final response = await _dio.get(url);
+      return response;
     } on DioError catch (e) {
       throw e.message;
     }
