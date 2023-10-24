@@ -38,7 +38,7 @@ class CoinsView extends StatelessWidget {
             ),
             Text(
               rank,
-              style: const TextStyle(color: Colors.white, fontSize: 10),
+              style: const TextStyle(color: Colors.white, fontSize: 22),
             ),
             const SizedBox(
               width: 20,

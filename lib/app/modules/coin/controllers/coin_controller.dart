@@ -1,6 +1,4 @@
 import 'package:get/get.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-
 import '../../../../model/coins.dart';
 import '../../../../model/coins_details.dart';
 import '../../../../service/api/api_conts.dart';
@@ -8,46 +6,93 @@ import '../../../../service/api/network_service.dart';
 
 class CoinController extends GetxController {
   final NetworkService _networkController = Get.find<NetworkService>();
-  static const int itemsPerPage = 6;
-  final PagingController<int, CoinDetail> pagingController =
-      PagingController(firstPageKey: 1);
 
   final coins = <Coin>[].obs;
   final coinsdetails = <CoinDetail>[].obs;
   final id = ''.obs;
 
+  int page = 1;
+  final int pageSize = 7;
+  bool hasNextPage = true;
+  bool isLoading = false;
+
   @override
   void onInit() {
-    pagingController.addPageRequestListener((pageKey) {
-      // When the user scrolls, fetch the next page of data.
-      paginateData(pageKey);
-    });
     super.onInit();
     fetchCoins();
+    fetchInitialCoins();
+    fetchSingleCoin();
     fetchCoinsdetailsbyId(id.value);
-    pagingController.addPageRequestListener((pageKey) {
-      paginateData(pageKey);
-    });
+    loadMoreCoins();
   }
 
-  @override
-  void onClose() {
-    pagingController.dispose();
-    super.onClose();
-  }
 
-  Future<void> fetchCoins() async {
+  Future<void> fetchInitialCoins() async {
+    page = 1;
+    isLoading = true;
     try {
-      final response = await _networkController.get(COINS);
+      final response =
+          await _networkController.get('$COINS?page=$page&pageSize=10');
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data;
         final fetchedCoins = data.map((e) => Coin.fromJson(e)).toList();
         coins.assignAll(fetchedCoins);
+        isLoading = false;
+      } else {
+        throw 'Error';
+      }
+    } catch (e) {
+      isLoading = false;
+      throw e.toString();
+    }
+  }
+
+  Future<void> fetchSingleCoin() async {
+    if (!isLoading) {
+      isLoading = true;
+      try {
+        final response =
+            await _networkController.get('$COINS?page=$page&pageSize=1');
+        if (response.statusCode == 200) {
+          final List<dynamic> data = response.data;
+          if (data.isNotEmpty) {
+            final fetchedCoin = Coin.fromJson(data.first);
+            coins.add(fetchedCoin);
+            isLoading = false;
+            page++;
+          } else {
+            isLoading = false;
+          }
+        } else {
+          isLoading = false;
+          throw 'Error';
+        }
+      } catch (e) {
+        isLoading = false;
+        throw e.toString();
+      }
+    }
+  }
+
+  Future<void> fetchCoins() async {
+    if (isLoading) return;
+
+    try {
+      final response =
+          await _networkController.get('$COINS?page=$page&pageSize=$pageSize');
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data;
+        final fetchedCoins = data.map((e) => Coin.fromJson(e)).toList();
+        coins.assignAll(fetchedCoins);
+        hasNextPage = fetchedCoins.length == pageSize;
+        page++;
       } else {
         throw 'Error';
       }
     } catch (e) {
       throw e.toString();
+    } finally {
+      isLoading = false;
     }
   }
 
@@ -66,56 +111,10 @@ class CoinController extends GetxController {
     }
   }
 
-  // psginateData(int value) async {
-  //   if (value == (coins.length - 3)) {
-  //     await fetchCoins();
-  //   }
-  // }
-  
-  // Future<void> paginateData(int pageKey) async {
-  //   try {
-  //     final response = await _networkController.get('$COINS?page=$pageKey');
-  //     if (response.statusCode == 200) {
-  //       final List<dynamic> data = response.data;
-  //       final fetchedCoins = data.map((e) => CoinDetail.fromJson(e)).toList();
-  //       final isLastPage = fetchedCoins.length < itemsPerPage;
-  //       if (isLastPage) {
-  //         pagingController.appendLastPage(fetchedCoins);
-  //       } else {
-  //         pagingController.appendPage(fetchedCoins, pageKey + 1);
-  //       }
-  //     } else {
-  //       throw 'Error';
-  //     }
-  //   } catch (e) {
-  //     throw e.toString();
-  //   }
-  // }
-
-  Future<void> paginateData(int pageKey) async {
-    try {
-      final response = await _networkController.get(COINS);
-      if (response.statusCode == 200) {
-        final List<dynamic> data = response.data;
-
-        final start = (pageKey - 1) * itemsPerPage;
-        final end = start + itemsPerPage;
-
-        if (start >= data.length) {
-          pagingController.appendLastPage([]);
-        } else {
-          final nextPageData = data.sublist(start, end);
-
-          final fetchedCoins =
-              nextPageData.map((e) => CoinDetail.fromJson(e)).toList();
-
-          pagingController.appendPage(fetchedCoins, pageKey + 1);
-        }
-      } else {
-        throw 'Error';
-      }
-    } catch (e) {
-      throw e.toString();
+  Future<void> loadMoreCoins() async {
+    if (hasNextPage) {
+      isLoading = true;
+      await fetchCoins();
     }
   }
 }
