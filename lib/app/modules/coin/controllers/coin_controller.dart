@@ -12,87 +12,28 @@ class CoinController extends GetxController {
   final id = ''.obs;
 
   int page = 1;
-  final int pageSize = 7;
-  bool hasNextPage = true;
   bool isLoading = false;
+  int initialLoadCount = 10;
 
   @override
   void onInit() {
     super.onInit();
     fetchCoins();
-    fetchInitialCoins();
-    fetchSingleCoin();
     fetchCoinsdetailsbyId(id.value);
-    loadMoreCoins();
-  }
-
-
-  Future<void> fetchInitialCoins() async {
-    page = 1;
-    isLoading = true;
-    try {
-      final response =
-          await _networkController.get('$COINS?page=$page&pageSize=10');
-      if (response.statusCode == 200) {
-        final List<dynamic> data = response.data;
-        final fetchedCoins = data.map((e) => Coin.fromJson(e)).toList();
-        coins.assignAll(fetchedCoins);
-        isLoading = false;
-      } else {
-        throw 'Error';
-      }
-    } catch (e) {
-      isLoading = false;
-      throw e.toString();
-    }
-  }
-
-  Future<void> fetchSingleCoin() async {
-    if (!isLoading) {
-      isLoading = true;
-      try {
-        final response =
-            await _networkController.get('$COINS?page=$page&pageSize=1');
-        if (response.statusCode == 200) {
-          final List<dynamic> data = response.data;
-          if (data.isNotEmpty) {
-            final fetchedCoin = Coin.fromJson(data.first);
-            coins.add(fetchedCoin);
-            isLoading = false;
-            page++;
-          } else {
-            isLoading = false;
-          }
-        } else {
-          isLoading = false;
-          throw 'Error';
-        }
-      } catch (e) {
-        isLoading = false;
-        throw e.toString();
-      }
-    }
   }
 
   Future<void> fetchCoins() async {
-    if (isLoading) return;
-
     try {
-      final response =
-          await _networkController.get('$COINS?page=$page&pageSize=$pageSize');
+      final response = await _networkController.get(COINS);
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data;
         final fetchedCoins = data.map((e) => Coin.fromJson(e)).toList();
         coins.assignAll(fetchedCoins);
-        hasNextPage = fetchedCoins.length == pageSize;
-        page++;
       } else {
         throw 'Error';
       }
     } catch (e) {
       throw e.toString();
-    } finally {
-      isLoading = false;
     }
   }
 
@@ -108,13 +49,6 @@ class CoinController extends GetxController {
       }
     } catch (e) {
       throw e.toString();
-    }
-  }
-
-  Future<void> loadMoreCoins() async {
-    if (hasNextPage) {
-      isLoading = true;
-      await fetchCoins();
     }
   }
 }
