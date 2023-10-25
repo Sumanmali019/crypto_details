@@ -59,8 +59,8 @@ class CoinController extends GetxController {
     try {
       final response = await _networkController.get(COINS);
       if (response.statusCode == 200) {
-        final List<Coin> data = response.data;
-        final fetchedCoins = data.map((e) => Coin.fromJson(e as Map<String, dynamic>)).toList();
+        final List<dynamic> data = response.data;
+        final fetchedCoins = data.map((e) => Coin.fromJson(e)).toList();
         coins.assignAll(fetchedCoins);
       } else {
         throw 'Error: Non-200 status code';
