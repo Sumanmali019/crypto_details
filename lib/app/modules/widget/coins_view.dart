@@ -29,12 +29,12 @@ class CoinsView extends StatelessWidget {
           children: [
             Image.asset(
               starImage,
-              width: 20,
-              height: 20,
+              width: 22,
+              height: 22,
               color: Colors.yellow,
             ),
             const SizedBox(
-              width: 2,
+              width: 4,
             ),
             Text(
               rank,
@@ -43,17 +43,21 @@ class CoinsView extends StatelessWidget {
             const SizedBox(
               width: 20,
             ),
-            CircleAvatar(
-              backgroundColor: Colors.transparent,
-              child: CachedNetworkImage(
-                imageUrl: imgurls,
-                placeholder: (context, url) => Container(
-                  alignment: Alignment.center,
-                  child: const Center(
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        backgroundColor: Colors.black,
+            Padding(
+              padding: const EdgeInsets.only(top: 12.0),
+              child: CircleAvatar(
+                radius: 30,
+                backgroundColor: Colors.transparent,
+                child: CachedNetworkImage(
+                  imageUrl: imgurls,
+                  placeholder: (context, url) => Container(
+                    alignment: Alignment.center,
+                    child: const Center(
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          backgroundColor: Colors.black,
+                        ),
                       ),
                     ),
                   ),
@@ -67,11 +71,14 @@ class CoinsView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
+                Padding(
+                  padding: const EdgeInsets.only(top: 12.0),
+                  child: Text(
+                    name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 25,
+                    ),
                   ),
                 ),
                 const SizedBox(
@@ -95,13 +102,13 @@ class CoinsView extends StatelessWidget {
           child: ExpandableText(
             animation: true,
             discriptions,
-            expandText: 'See more',
+            expandText: 'more',
             collapseText: 'See less',
             maxLines: 2,
             linkColor: Colors.blue,
             style: const TextStyle(color: Colors.white, fontSize: 18),
             animationCurve: Curves.easeOut,
-            animationDuration: const Duration(milliseconds: 350),
+            animationDuration: const Duration(milliseconds: 250),
           ),
         )
       ],
