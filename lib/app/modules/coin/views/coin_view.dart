@@ -35,7 +35,7 @@ class CoinView extends GetView<CoinController> {
             itemBuilder: (context, index) {
               final coin = coinController.coins[index];
               return Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
+                padding: const EdgeInsets.only(bottom: 8.0, left: 8, right: 8),
                 child: Container(
                   constraints: const BoxConstraints(),
                   decoration: BoxDecoration(
@@ -65,9 +65,14 @@ class CoinView extends GetView<CoinController> {
                           discriptions: description ?? 'N/A',
                         );
                       } else {
-                        return const Center(
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
+                        return Center(
+                          child: LinearProgressIndicator(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(10)),
+                            minHeight: 90,
+                            backgroundColor: Colors.grey.shade700,
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                                Colors.grey),
                           ),
                         );
                       }
