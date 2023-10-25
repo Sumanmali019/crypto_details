@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../model/coins.dart';
 import '../../../../model/coins_details.dart';
@@ -10,18 +11,50 @@ class CoinController extends GetxController {
   final coins = <Coin>[].obs;
   final coinsdetails = <CoinDetail>[].obs;
   final id = ''.obs;
+  int listLength = 6;
 
-  int page = 1;
-  bool isLoading = false;
-  int initialLoadCount = 10;
+  List<Coin> list = [];
+  ScrollController controller = ScrollController();
 
   @override
   void onInit() {
     super.onInit();
+    generateList();
     fetchCoins();
+    addItems();
     fetchCoinsdetailsbyId(id.value);
   }
 
+  generateList() {
+    list = List.generate(listLength, (index) => Coin());
+  }
+
+  addItems() async {
+    controller.addListener(() {
+      if (controller.position.maxScrollExtent == controller.position.pixels) {
+        for (int i = 0; i < 2; i++) {
+          listLength++;
+          list.add(Coin());
+          update();
+        }
+      }
+    });
+  }
+
+  // Future<void> fetchCoins() async {
+  //   try {
+  //     final response = await _networkController.get(COINS);
+  //     if (response.statusCode == 200) {
+  //       final List<dynamic> data = response.data;
+  //       final fetchedCoins = data.map((e) => Coin.fromJson(e)).toList();
+  //       coins.assignAll(fetchedCoins);
+  //     } else {
+  //       throw 'Error';
+  //     }
+  //   } catch (e) {
+  //     throw e.toString();
+  //   }
+  // }
   Future<void> fetchCoins() async {
     try {
       final response = await _networkController.get(COINS);
@@ -30,7 +63,7 @@ class CoinController extends GetxController {
         final fetchedCoins = data.map((e) => Coin.fromJson(e)).toList();
         coins.assignAll(fetchedCoins);
       } else {
-        throw 'Error';
+        throw 'Error: Non-200 status code';
       }
     } catch (e) {
       throw e.toString();
