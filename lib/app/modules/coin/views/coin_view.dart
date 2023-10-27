@@ -35,7 +35,7 @@ class CoinView extends GetView<CoinController> {
             itemBuilder: (context, index) {
               final coin = coinController.coins[index];
               return Padding(
-                padding: const EdgeInsets.only(bottom: 8.0, left: 8, right: 8),
+                padding: const EdgeInsets.only(bottom: 8.0, left: 10, right: 10),
                 child: Container(
                   constraints: const BoxConstraints(),
                   decoration: BoxDecoration(
