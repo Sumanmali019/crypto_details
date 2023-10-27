@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class CoinsView extends StatelessWidget {
   final String starImage;
@@ -50,18 +51,7 @@ class CoinsView extends StatelessWidget {
                 backgroundColor: Colors.transparent,
                 child: CachedNetworkImage(
                   imageUrl: imgurls,
-                  placeholder: (context, url) => Container(
-                    alignment: Alignment.center,
-                    child: const Center(
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          backgroundColor: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                ).animate().shimmer(duration: 1800.ms),
               ),
             ),
             const SizedBox(
@@ -79,7 +69,9 @@ class CoinsView extends StatelessWidget {
                       color: Colors.white,
                       fontSize: 25,
                     ),
-                  ),
+                  ).animate().fadeIn(
+                        delay: const Duration(milliseconds: 150),
+                      ),
                 ),
                 const SizedBox(
                   height: 4,
@@ -90,7 +82,9 @@ class CoinsView extends StatelessWidget {
                       color: Colors.white,
                       fontSize: 18,
                       fontStyle: FontStyle.italic),
-                ),
+                ).animate().fadeIn(
+                        delay: const Duration(milliseconds: 200),
+                      ),
               ],
             ),
           ],
@@ -109,7 +103,7 @@ class CoinsView extends StatelessWidget {
             style: const TextStyle(color: Colors.white, fontSize: 18),
             animationCurve: Curves.easeOut,
             animationDuration: const Duration(milliseconds: 250),
-          ),
+          ).animate().fadeIn(delay: const Duration(milliseconds: 300)),
         )
       ],
     );
